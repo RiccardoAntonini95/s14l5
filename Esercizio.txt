@@ -1,0 +1,85 @@
+-----------------------QUERY--------------------------------
+1)SELECT COUNT(*) AS TotaleVerbali FROM Verbali
+
+2)SELECT Cognome, Nome, COUNT(*) AS TotaleVerbali FROM Verbali AS v
+  INNER JOIN Anagrafiche AS a ON
+  v.IdAnagrafica = a.IdAnagrafica
+  GROUP BY Cognome, Nome
+
+3)SELECT Descrizione, COUNT(*) AS TotaleVerbali FROM Verbali AS v
+  INNER JOIN TipiViolazione AS t ON
+  v.IdViolazione = t.IdViolazione
+  GROUP BY Descrizione
+
+4)SELECT Cognome, Nome, SUM(DecurtamentoPunti) AS TotalePuntiDecurtati FROM Verbali AS v
+  INNER JOIN Anagrafiche AS a ON
+  v.IdAnagrafica = a.IdAnagrafica
+  GROUP BY Cognome, Nome
+
+5)SELECT Cognome, Nome, DataViolazione, IndirizzoViolazione, SUM(Importo) AS TotaleImporto, SUM(DecurtamentoPunti) AS TotalePunti
+ FROM Verbali AS v
+ INNER JOIN Anagrafiche AS a ON
+ v.IdAnagrafica = a.IdAnagrafica
+ GROUP BY Cognome, Nome, DataViolazione, IndirizzoViolazione, Importo, DecurtamentoPunti, Città
+ HAVING Città = 'Palermo'
+
+6)SELECT Cognome, Nome, Indirizzo, DataViolazione, Importo, DecurtamentoPunti
+ FROM Verbali AS v
+ INNER JOIN Anagrafiche AS a ON
+ v.IdAnagrafica = a.IdAnagrafica
+ WHERE DataViolazione BETWEEN '2009-02-01' AND '2009-07-01'
+
+7)SELECT Cognome, Nome, SUM(Importo) AS TotaleImportoPagato FROM Verbali AS v
+  INNER JOIN Anagrafiche AS a ON
+  v.IdAnagrafica = a.IdAnagrafica
+  GROUP BY Cognome, Nome
+
+8)SELECT * FROM Anagrafiche 
+WHERE Città = 'Palermo'
+
+9)DECLARE @DataDaCercare date = '2002-01-18'
+
+SELECT DataViolazione, Importo, DecurtamentoPunti FROM Verbali
+WHERE DataViolazione = @DataDaCercare
+
+10)SELECT COUNT(*) AS NumeroVerbaliAgente, Nominativo_Agente FROM Verbali 
+ GROUP BY Nominativo_Agente
+
+11)SELECT Cognome, Nome, Indirizzo, DataViolazione, Importo, DecurtamentoPunti 
+ FROM Verbali AS v
+ INNER JOIN Anagrafiche AS a ON
+ v.IdAnagrafica = a.IdAnagrafica
+ WHERE DecurtamentoPunti > 5
+
+12)SELECT Cognome, Nome, Indirizzo, DataViolazione, Importo, DecurtamentoPunti 
+ FROM Verbali AS v
+ INNER JOIN Anagrafiche AS a ON
+ v.IdAnagrafica = a.IdAnagrafica
+ WHERE Importo > 400
+
+
+---------------------STORE PROCEDURES-----------------------
+
+1)CREATE PROCEDURE MulteInQuestoAnno @Anno Int
+AS
+BEGIN
+SELECT * FROM Verbali
+WHERE YEAR(DataViolazione) = @Anno
+END
+
+2)CREATE PROCEDURE TotalePuntiDecurtatiQuestoGiorno @Data Date
+AS
+BEGIN
+SELECT SUM(DecurtamentoPunti) AS PuntiToltiQuestoGiorno FROM Verbali
+WHERE DataViolazione = @Data
+END
+
+3)CREATE PROCEDURE EliminaVerbale 
+@IdVerbale int
+
+AS
+ BEGIN
+ DELETE FROM Verbali
+ WHERE IdVerbale = @IdVerbale
+ END
+GO
